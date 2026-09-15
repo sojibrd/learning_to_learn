@@ -207,7 +207,7 @@
   --t-progress-current-height: 16px;
 
   /* `.progress-mark[data-live]` blinks; the token name is kept as-is so this
-     file stays diffable against system_design's copy of the contract. */
+     file stays diffable against system_design_local_company's copy of the contract. */
   --t-lamp-blink-animation: lampBlink 1s var(--t-ease) infinite;
 
   /* --- Scrollbars ------------------------------------------------------ */
