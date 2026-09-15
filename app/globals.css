@@ -44,6 +44,12 @@ body {
 }
 
 @layer components {
+  /* --- Measure: a reading column's maximum width ----------------------- */
+
+  .measure {
+    max-width: var(--t-measure);
+  }
+
   /* --- Surfaces -------------------------------------------------------- */
 
   .surface-app {
@@ -126,6 +132,10 @@ body {
 
   .t-muted {
     color: var(--t-text-muted);
+  }
+
+  .t-faint {
+    color: var(--t-text-faint);
   }
 
   /* "Correct / succeeded" ink. A component says a thing is OK; the theme
@@ -461,6 +471,57 @@ body {
     font-weight: 600;
   }
 
+  /* --- Task text: struck through once the task is done ----------------- */
+  /* Reads `data-done` off the card wrapper, so ticking the box restyles the
+     text without the component branching on class names. */
+
+  .task-text {
+    color: var(--t-text-title);
+  }
+
+  [data-done="true"] .task-text {
+    color: var(--t-text-muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--t-text-faint);
+  }
+
+  /* --- Check: the task-done toggle ------------------------------------- */
+  /* Applied to a native `<input type="checkbox">`: the platform keeps the
+     semantics and keyboard behaviour, the theme takes over the paint. */
+
+  .check {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: var(--t-check-size);
+    height: var(--t-check-size);
+    border: var(--t-check-border-width) solid var(--t-check-border);
+    border-radius: var(--t-check-radius);
+    background-color: var(--t-check-bg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 72%;
+    box-shadow: var(--t-check-shadow);
+    cursor: pointer;
+    transition: all 150ms var(--t-ease);
+  }
+
+  .check:hover {
+    border-color: var(--t-check-border-hover);
+  }
+
+  .check:focus-visible {
+    outline: 2px solid var(--t-accent);
+    outline-offset: 2px;
+  }
+
+  .check:checked {
+    background-color: var(--t-check-on-bg);
+    border-color: var(--t-check-on-border);
+    background-image: var(--t-check-on-mark);
+    box-shadow: var(--t-check-on-shadow);
+  }
+
   /* --- Focus ----------------------------------------------------------- */
 
   /* Every keyboard-reachable role gets the SAME ring. Left to the browser
@@ -495,6 +556,14 @@ body {
 
 .animate-slide-in-left {
   animation: slide-in-left 0.25s var(--t-ease) forwards;
+}
+
+/* Tap targets stay reachable on a phone. */
+@media (max-width: 1023px) {
+  button,
+  a {
+    min-height: 36px;
+  }
 }
 
 /* ---------------------------------------------------------------------------

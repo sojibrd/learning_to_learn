@@ -1,26 +1,80 @@
-# Creativity
+# ব্লক ৬ — Creativity
 
-*১২টি লিংক · সবগুলোই আসল URL*
+*দিন ০৫৮–০৬৯*
 
-> **নোট:** এই ফোল্ডারটা বুকমার্কে "Learning to learn"-এর **ভেতরে ছিল না**, পাশে আলাদা ফোল্ডার হিসেবে ছিল। নাম "Creativity" হলেও ভেতরের সবকিছুই আসলে **Google-এর ক্যারিয়ার, নিয়োগ ও টিম-ব্যবস্থাপনার রিসোর্স** — আপনার Google L5-এর লক্ষ্যের সাথে সরাসরি মেলে বলে এখানে যোগ করা হলো।
+Google-এর নিয়োগ, ইঞ্জিনিয়ারিং চর্চা আর interview অনুশীলনের বারোটা লিংক — প্রতিটা খুলে একটা কাজ, নয়তো জেনেশুনে বাদ। এই ব্লকে 🔁 নেই; লিংক মুখস্থের জিনিস নয়। 🧠 (Pareto principle)
 
-## Google-এ নিয়োগ প্রক্রিয়া
+> **ব্লক শেষে:** বারোটা লিংকের প্রতিটায় একটা কাজ হয়েছে, বা "বাদ, কারণ ___" লেখা?
 
-- [ ] [Our hiring process — Google Careers](https://www.google.com/about/careers/applications/how-we-hire) — Google নিজে তাদের নিয়োগের ধাপগুলো ব্যাখ্যা করেছে: আবেদন, screening, interview, hiring committee। প্রক্রিয়াটা আগে থেকে জানা থাকলে কোন ধাপে কী প্রস্তুতি লাগবে বোঝা সহজ হয়।
-- [ ] [Interviewing at Google: Best practices, advice, and tips](https://www.google.com/about/careers/applications/interview-tips) — Google-এর নিজের দেওয়া interview পরামর্শ। সবচেয়ে কাজের অংশটা হলো তারা বলে দেয় **কীভাবে উত্তর দিতে হবে** — জোরে ভাবা, clarifying question করা, trade-off বলা। আপনার দুর্বলতার সাথে এটা সরাসরি মেলে।
-- [ ] [Build your future with Google](https://www.google.com/about/careers/applications/buildyourfuture) — ছাত্র ও নতুনদের জন্য প্রোগ্রাম, প্রশিক্ষণ ও রিসোর্সের সংগ্রহ।
+### দিন ০৫৮ · Our hiring process — Google Careers
 
-## ইঞ্জিনিয়ারিং চর্চা
+- [ ] ১০′ [Our hiring process](https://www.google.com/about/careers/applications/how-we-hire) খুলে Google-এর ধাপগুলো নিজের plan-এর ধাপের পাশে লিখুন — কোন ধাপের প্রস্তুতি এখন আপনার plan-এ নেই 🧠 (Everything is a game)
 
-- [ ] [Google Engineering Practices Documentation (eng-practices)](https://google.github.io/eng-practices/) — **এই তালিকার সবচেয়ে কাজের জিনিস।** Google-এর ভেতরে code review কীভাবে হয়, তার পূর্ণ নির্দেশিকা — রিভিউয়ার কী দেখেন, লেখক কীভাবে CL সাজাবেন। আপনার `code_standards` প্রজেক্টের সাথে সরাসরি মেলে, আর "Code Review দক্ষতা" আপনার নিজের চিহ্নিত ঘাটতিগুলোর একটা।
-- [ ] [Google re:Work](https://rework.withgoogle.com/intl/en/) — Google তাদের ভেতরের গবেষণা ও ব্যবস্থাপনার পদ্ধতি প্রকাশ্যে এনেছে এই সাইটে: নিয়োগ, লক্ষ্য নির্ধারণ (OKR), টিম, পক্ষপাত।
-- [ ] [re:Work — Understand team effectiveness](https://rework.withgoogle.com/intl/en/guides/understanding-team-effectiveness) — Project Aristotle-এর ফলাফল: কোন টিম ভালো কাজ করে তা নির্ভর করে সদস্যরা কত চৌকস তার উপর নয়, বরং **psychological safety**-র উপর — মানে টিমে ভুল স্বীকার করা বা বোকা প্রশ্ন করা নিরাপদ কি না। behavioral রাউন্ডে টিম নিয়ে প্রশ্নের ভালো ভিত্তি।
-- [ ] [re:Work — Managers](https://rework.withgoogle.com/intl/en/subjects/managers) — Project Oxygen: ভালো manager-এর আচরণগুলো কী কী। senior পদে যাওয়ার আগে জানা দরকার, কারণ L5 মানে শুধু কোড নয়, দিকনির্দেশনাও।
+> **দিন শেষে:** ধাপের পাশাপাশি তালিকা আর যা নেই সেটা লেখা?
 
-## Interview ও যোগাযোগের অনুশীলন
+### দিন ০৫৯ · Interviewing at Google: Best practices, advice, and tips
 
-- [ ] [Jeff H Sipe — Practice Interviews (YouTube)](https://www.youtube.com/@jeffhsipepi) — Google-এর নিয়োগ প্রক্রিয়া নিয়ে কাজ করা একজন interview coach-এর চ্যানেল। মূলত behavioral আর recruiter কলের প্রস্তুতি, আসল mock interview-র রেকর্ডিংসহ।
-- [ ] [Exponent](https://www.tryexponent.com/home) — interview প্রস্তুতির প্ল্যাটফর্ম (বেশিরভাগ অংশ পেইড)। system design আর behavioral-এর জন্য ভালো, আর অন্যদের সাথে mock interview করার ব্যবস্থা আছে — আপনার "Mock Interview: No" সমস্যার একটা সরাসরি সমাধান।
-- [ ] [Your Body Language May Shape Who You Are — Amy Cuddy, TED](https://www.youtube.com/watch?v=Ks-_Mh1QhMc) — interview-এর আগে আত্মবিশ্বাস নিয়ে বিখ্যাত বক্তৃতা। **তবে জেনে রাখুন:** এর মূল বৈজ্ঞানিক দাবিটা (power posing হরমোন বদলায়) পরবর্তী গবেষণায় টেকেনি। উপস্থাপনা আর শরীরী ভাষার সাধারণ পরামর্শ হিসেবে দেখুন, বিজ্ঞান হিসেবে নয়।
-- [ ] [Leading Teams — Coursera](https://www.coursera.org/learn/leading-teams) — টিম পরিচালনার অনলাইন কোর্স। audit করলে বিনামূল্যে দেখা যায়, সার্টিফিকেট নিলে টাকা লাগে।
-- [ ] [Grow with Google](https://grow.google/) — Google-এর বিনামূল্যের প্রশিক্ষণ ও সার্টিফিকেট প্রোগ্রাম। আপনার বর্তমান স্তরের জন্য বেশিরভাগই প্রাথমিক, তাই তালিকায় এটার অগ্রাধিকার সবচেয়ে কম।
+- [ ] ১০′ [Interviewing at Google](https://www.google.com/about/careers/applications/interview-tips) থেকে উত্তর দেওয়ার তিনটা নিয়ম (জোরে ভাবা, clarifying question, trade-off) লিখে একটা পুরনো প্রবলেমের উত্তর জোরে বলুন, তিনটাই মেনে 🧠 (Test yourself)
+
+> **দিন শেষে:** তিন নিয়ম মেনে একটা উত্তর জোরে বলা?
+
+### দিন ০৬০ · Build your future with Google
+
+- [ ] ১০′ [Build your future with Google](https://www.google.com/about/careers/applications/buildyourfuture) ঘুরে এক লাইনে — এর কোনো অংশ আপনার এখনকার স্তরে লাগে কি না; না লাগলে "বাদ, কারণ ___" লিখে বন্ধ 🧠 (Pareto principle)
+
+> **দিন শেষে:** রাখা বা বাদের এক লাইন?
+
+### দিন ০৬১ · Google Engineering Practices Documentation (eng-practices)
+
+- [ ] ১০′ [eng-practices](https://google.github.io/eng-practices/)-এর code review অংশ থেকে রিভিউয়ার যে তিনটা জিনিস দেখেন লিখুন, আর নিজের সাম্প্রতিক একটা PR ঐ তিনটায় মিলিয়ে দেখুন 🧠 (Deliberate practice)
+
+> **দিন শেষে:** তিনটা জিনিস আর নিজের PR মেলানো?
+
+### দিন ০৬২ · Google re:Work
+
+- [ ] ১০′ [re:Work](https://rework.withgoogle.com/intl/en/)-এর বিষয়গুলো (নিয়োগ, লক্ষ্য নির্ধারণ, টিম, পক্ষপাত) থেকে একটা বেছে নিজের টিম নিয়ে এক লাইনের পর্যবেক্ষণ 🧠 (Everything is a game)
+
+> **দিন শেষে:** এক লাইনের পর্যবেক্ষণ লেখা?
+
+### দিন ০৬৩ · re:Work — Understand team effectiveness
+
+- [ ] ১০′ [Understand team effectiveness](https://rework.withgoogle.com/intl/en/guides/understanding-team-effectiveness) থেকে psychological safety নিজের ভাষায় এক লাইনে, আর এমন একটা ঘটনা লিখুন যেখানে টিমে প্রশ্ন করা নিরাপদ বা অনিরাপদ ছিল 🧠 (Feynman technique)
+
+> **দিন শেষে:** এক লাইন আর একটা ঘটনা লেখা?
+
+### দিন ০৬৪ · re:Work — Managers
+
+- [ ] ১০′ [re:Work — Managers](https://rework.withgoogle.com/intl/en/subjects/managers) থেকে ভালো manager-এর তিনটা আচরণ লিখে প্রতিটার পাশে নিজের কাজ থেকে একটা উদাহরণ, থাকলে 🧠 (Skill stacking)
+
+> **দিন শেষে:** তিনটা আচরণ, উদাহরণসহ?
+
+### দিন ০৬৫ · Jeff H Sipe — Practice Interviews (YouTube)
+
+- [ ] ১০′ [Practice Interviews](https://www.youtube.com/@jeffhsipepi)-এর একটা mock-এর প্রশ্নটা শুনে থামান, তারপর নিজের উত্তর রেকর্ড করুন আগে — বাকিটা পরে মিলিয়ে দেখুন 🧠 (Test yourself · The science of feedback)
+
+> **দিন শেষে:** নিজের উত্তর রেকর্ড করা, মেলানোর আগে?
+
+### দিন ০৬৬ · Exponent
+
+- [ ] ১০′ [Exponent](https://www.tryexponent.com/home)-এ অন্যের সাথে mock-এর ব্যবস্থা দেখে এক লাইনে — এটা আপনার mock-এর সঙ্গীর সমস্যা মেটায় কি না, আর বিনামূল্যের বিকল্প কী 🧠 (Importance of community)
+
+> **দিন শেষে:** mock-এর সঙ্গী নিয়ে এক লাইন?
+
+### দিন ০৬৭ · Your Body Language May Shape Who You Are — Amy Cuddy, TED
+
+- [ ] ১০′ [Amy Cuddy-র বক্তৃতা](https://www.youtube.com/watch?v=Ks-_Mh1QhMc) নিয়ে দুই কলাম — উপস্থাপনার যে পরামর্শ কাজের, আর যে দাবি পরের গবেষণায় টেকেনি 🧠 (Trust this one person)
+
+> **দিন শেষে:** দুই কলাম লেখা?
+
+### দিন ০৬৮ · Leading Teams — Coursera
+
+- [ ] ১০′ [Leading Teams](https://www.coursera.org/learn/leading-teams)-এর সিলেবাস দেখে এক লাইনে — এখন নাকি পরে, আর কেন 🧠 (Pareto principle revisited)
+
+> **দিন শেষে:** এখন বা পরের সিদ্ধান্ত লেখা?
+
+### দিন ০৬৯ · Grow with Google
+
+- [ ] ১০′ [Grow with Google](https://grow.google/) দেখে এক লাইনে "রাখছি, কারণ ___" বা "বাদ, কারণ ___" 🧠 (Pareto principle)
+- [ ] ১০′ [Examples](07-examples.md)-এর দৃশ্য ৪ — Interview ও take-home task: পরের interview-এর আগের সপ্তাহের ছক, দৃশ্যের তিনটা ধাপ দিয়ে 🧠 (Parkinson's law · Test yourself)
+
+> **দিন শেষে:** রাখা বা বাদের লাইন, আর দৃশ্য ৪-এর ছক?

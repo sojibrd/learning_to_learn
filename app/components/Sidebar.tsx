@@ -1,225 +1,186 @@
 "use client";
 
-import { useMemo, useState, type RefObject } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Check, PanelLeftClose, Search, X } from "lucide-react";
-import type { Doc, TopicIndexEntry } from "../lib/content";
+import type { IndexBlock } from "../lib/plan";
+import { toBnDigits } from "../lib/dates";
+import { SITE } from "../lib/site";
+import { useMounted, useProgress } from "../hooks/useProgress";
 import ProgressReadout from "./ProgressReadout";
+import { PanelLeftClose, X } from "./icons";
 
-export interface SidebarDocState {
-  /** "পড়া হয়েছে" টগল দেওয়া আছে কি না */
-  read: boolean;
-  topicsDone: number;
-  topicTotal: number;
+const PAGES = [
+  { href: "/", label: "আজ" },
+  { href: "/review/", label: "ঝালাই" },
+  { href: "/topics/", label: "বিষয়" },
+  { href: "/rules/", label: "নিয়ম" },
+];
+
+function isPageActive(path: string, href: string): boolean {
+  if (href === "/") return path === "/";
+  return path.startsWith(href);
 }
 
-interface SidebarProps {
-  docs: Doc[];
-  topicIndex: TopicIndexEntry[];
-  /** route → অবস্থা; Shell একবার হিসাব করে দুই mount-এ পাঠায় */
-  docState: Record<string, SidebarDocState>;
-  progressPercent: number;
-  /** শুধু drawer-এ — তালিকার বেরোনোর পথ */
+type SidebarProps = {
+  blocks: IndexBlock[];
+  /** শেষে `/` সহ pathname */
+  path: string;
+  /** যে দিন এখন পাতায় দেখানো — rail-এ জ্বলে */
+  selectedCode?: string;
+  /** আজকের দিন — "আজ" chip */
+  todayCode?: string;
+  /** আজকের ব্লক — "এখন" chip */
+  todaySlug?: string;
+  /** যে ব্লকের দিনগুলো খোলা — একবারে একটাই */
+  openSlug?: string;
+  percent: number;
+  done: number;
+  total: number;
+  dayCount: number;
+  /** শুধু drawer-এ — বেরোনোর পথ */
   onClose?: () => void;
-  /** শুধু rail-এ — তালিকা ভাঁজ করার পথ */
+  /** শুধু স্থায়ী rail-এ — ভাঁজ করা যায় */
   onCollapse?: () => void;
-  /** rail-এর input, যাতে `/` ও Ctrl+K যেকোনো জায়গা থেকে পৌঁছাতে পারে */
-  searchRef?: RefObject<HTMLInputElement | null>;
-  /** hydration-এর আগে কোনো progress সংখ্যা দেখানো যাবে না */
-  mounted: boolean;
-}
-
-function normalize(path: string): string {
-  return path.replace(/\/+$/, "") || "/";
-}
+};
 
 /**
- * ভাগ → বিষয় নেভিগেশন, সাথে search।
+ * ব্লক → দিন সূচি, পাতার লিংক আর plan-এর gauge।
  *
- * একটাই কম্পোনেন্ট দুই জায়গায় বসে: `lg:` rail আর তার নিচের drawer। পার্থক্য
- * শুধু বেরোনোর পথে; দুটো আলাদা কম্পোনেন্ট মানে দুটো তালিকা সময়ের সাথে আলাদা
- * হয়ে যাওয়া।
- *
- * search-এর দ্বিতীয় গ্রুপটা heading নয়, **বিষয়** — কারণ এই সাইটে খোঁজার
- * জিনিসটা সেকশনের নাম নয়, "Interleaving" বা "Parkinson's law"।
+ * একই কম্পোনেন্ট rail আর drawer দুই জায়গায় — পার্থক্য শুধু বেরোনোর পথে।
+ * সব ব্লক সবসময় দেখা যায়; দিনগুলো শুধু খোলা ব্লকের। 🧠 Create a roadmap
  */
 export default function Sidebar({
-  docs,
-  topicIndex,
-  docState,
-  progressPercent,
+  blocks,
+  path,
+  selectedCode,
+  todayCode,
+  todaySlug,
+  openSlug,
+  percent,
+  done,
+  total,
+  dayCount,
   onClose,
   onCollapse,
-  searchRef,
-  mounted,
 }: SidebarProps) {
-  const pathname = normalize(usePathname());
-  const [search, setSearch] = useState("");
-
-  const query = search.trim().toLowerCase();
-  const searching = query.length > 0;
-
-  const { docMatches, topicMatches } = useMemo(() => {
-    if (!searching) return { docMatches: [], topicMatches: [] };
-    return {
-      docMatches: docs.filter((doc) => doc.title.toLowerCase().includes(query)),
-      topicMatches: topicIndex.filter((entry) => entry.label.toLowerCase().includes(query)),
-    };
-  }, [docs, topicIndex, query, searching]);
-
-  const noMatches = searching && docMatches.length === 0 && topicMatches.length === 0;
+  const mounted = useMounted();
+  const { doneCount } = useProgress();
 
   return (
     <div className="flex h-full flex-col">
       <div className="seam-b flex shrink-0 items-center justify-between gap-2 px-4 py-3">
         <Link href="/" onClick={onClose} className="flex min-w-0 items-center gap-2">
-          <span className="shrink-0 text-xl" aria-hidden>
-            🧠
-          </span>
-          <span className="t-title truncate text-sm">শেখা কীভাবে শিখতে হয়</span>
+          <span className="shrink-0 text-xl">{SITE.emoji}</span>
+          <span className="t-title truncate text-sm">{SITE.short}</span>
         </Link>
 
         <div className="flex shrink-0 items-center gap-1.5">
           {onClose && (
-            <button
-              onClick={onClose}
-              className="control control--quiet p-1.5"
-              aria-label="সাইডবার বন্ধ করুন"
-            >
-              <X size={14} />
+            <button type="button" onClick={onClose} className="control control--quiet p-1.5" aria-label="সাইডবার বন্ধ করুন">
+              <X />
             </button>
           )}
-
           {onCollapse && (
             <button
+              type="button"
               onClick={onCollapse}
               className="control control--quiet p-1.5"
               aria-label="সূচিপত্র লুকান"
               aria-expanded
               aria-controls="site-sidebar"
             >
-              <PanelLeftClose size={14} />
+              <PanelLeftClose />
             </button>
           )}
         </div>
       </div>
 
       <div className="flex shrink-0 flex-col gap-4 px-4 pt-4">
-        <ProgressReadout percent={mounted ? progressPercent : 0} />
+        <nav className="grid grid-cols-4 gap-1" aria-label="পাতা">
+          {PAGES.map((page) => {
+            const active = isPageActive(path, page.href);
+            return (
+              <Link
+                key={page.href}
+                href={page.href}
+                onClick={onClose}
+                className="tab px-1 py-1.5 text-xs"
+                aria-selected={active}
+                aria-current={active ? "page" : undefined}
+              >
+                {page.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-        <div className="relative">
-          <span className="t-muted pointer-events-none absolute left-2.5 top-2.5 flex" aria-hidden>
-            <Search size={14} />
-          </span>
-          <input
-            ref={searchRef}
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key !== "Escape") return;
-              if (search) setSearch("");
-              else event.currentTarget.blur();
-            }}
-            placeholder="ভাগ বা বিষয় খুঁজুন..."
-            aria-label="ভাগ বা বিষয় খুঁজুন (শর্টকাট: / বা Ctrl+K)"
-            className="surface-well t-body w-full py-2 pl-8 pr-8 text-sm"
-          />
-          {search ? (
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="control control--quiet absolute right-1.5 top-1.5 px-1.5 py-1"
-              aria-label="খোঁজা বাতিল"
-            >
-              <X size={12} />
-            </button>
-          ) : (
-            <span
-              className="t-caption t-mono pointer-events-none absolute right-2.5 top-2 hidden select-none text-[11px] lg:inline"
-              title="শর্টকাট: / অথবা Ctrl+K"
-            >
-              /
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="t-label">{toBnDigits(dayCount)} দিনের কাজ</span>
+            <span className="t-mono t-accent text-xs" suppressHydrationWarning>
+              {toBnDigits(done)}/{toBnDigits(total)} ({toBnDigits(percent)}%)
             </span>
-          )}
+          </div>
+          <ProgressReadout percent={percent} label={`${toBnDigits(dayCount)} দিনের অগ্রগতি`} />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        {searching ? (
-          <div className="flex flex-col gap-5">
-            {noMatches && (
-              <div className="surface-well t-caption p-4 text-center">
-                &ldquo;{search}&rdquo; দিয়ে কিছু পাওয়া যায়নি।
-              </div>
-            )}
+        <div className="flex flex-col gap-4">
+          {blocks.map((block) => {
+            const blockIds = block.days.flatMap((day) => day.taskIds);
+            const blockDone = mounted ? doneCount(blockIds) : 0;
+            const blockHref = `/block/${block.slug}/`;
 
-            {docMatches.length > 0 && (
-              <div className="topic-group flex flex-col gap-1.5 pb-4">
-                <span className="t-label">ভাগ ({docMatches.length})</span>
-                {docMatches.map((doc) => (
-                  <Link
-                    key={doc.route}
-                    href={doc.route}
-                    onClick={onClose}
-                    aria-current={normalize(doc.route) === pathname ? "true" : undefined}
-                    className="row block truncate px-3 py-2 text-xs"
-                  >
-                    {doc.title}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-            {topicMatches.length > 0 && (
-              <div className="flex flex-col gap-1.5">
-                <span className="t-label">বিষয় ({topicMatches.length})</span>
-                {topicMatches.map((entry) => (
-                  <Link
-                    key={`${entry.docRoute}${entry.topicId}`}
-                    href={`${entry.docRoute}#${entry.topicId}`}
-                    onClick={onClose}
-                    className="row block px-3 py-2"
-                  >
-                    <span className="block truncate text-xs">{entry.label}</span>
-                    <span className="t-caption block truncate">{entry.docTitle}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-1.5">
-            {docs.map((doc) => {
-              const state = docState[doc.route];
-              const active = normalize(doc.route) === pathname;
-              const read = mounted && state?.read;
-
-              return (
+            return (
+              <div key={block.slug} className="topic-group pb-4">
                 <Link
-                  key={doc.route}
-                  href={doc.route}
+                  href={blockHref}
                   onClick={onClose}
-                  aria-current={active ? "true" : undefined}
-                  className="row flex items-center justify-between gap-2 px-3 py-2 text-xs"
+                  aria-current={path === blockHref ? "true" : undefined}
+                  className="row mb-2 flex items-center justify-between gap-2 px-2 py-1.5 text-sm"
                 >
-                  <span className="flex min-w-0 items-center gap-1.5">
-                    <span className="w-3 shrink-0" aria-hidden suppressHydrationWarning>
-                      {read ? <Check size={11} /> : null}
-                    </span>
-                    <span className="truncate">{doc.title}</span>
+                  <span className="min-w-0 truncate">
+                    {toBnDigits(block.num)} · {block.name}
                   </span>
-                  {state && state.topicTotal > 0 && (
-                    <span className="chip shrink-0" suppressHydrationWarning>
-                      {mounted ? state.topicsDone : 0}/{state.topicTotal}
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    {block.slug === todaySlug && <span className="chip chip--accent">এখন</span>}
+                    <span className="chip" suppressHydrationWarning>
+                      {toBnDigits(blockDone)}/{toBnDigits(blockIds.length)}
                     </span>
-                  )}
+                  </span>
                 </Link>
-              );
-            })}
-          </div>
-        )}
+
+                {block.slug === openSlug && (
+                  <div className="seam-l ml-1 flex flex-col gap-1 pl-2">
+                    {block.days.map((day) => {
+                      const dayDone = mounted ? doneCount(day.taskIds) : 0;
+                      return (
+                        <Link
+                          key={day.code}
+                          id={`day-row-${day.code}`}
+                          href={`/day/${day.code}/`}
+                          onClick={onClose}
+                          aria-current={day.code === selectedCode ? "true" : undefined}
+                          className="row flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-xs"
+                        >
+                          <span className="truncate">
+                            {day.label} {day.title}
+                          </span>
+                          <span className="flex shrink-0 items-center gap-1.5">
+                            {day.code === todayCode && <span className="chip chip--accent">আজ</span>}
+                            <span className="text-[10px]" suppressHydrationWarning>
+                              ({toBnDigits(dayDone)}/{toBnDigits(day.taskIds.length)})
+                            </span>
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

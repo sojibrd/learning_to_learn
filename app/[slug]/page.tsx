@@ -1,81 +1,91 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import DocToc from "../components/DocToc";
-import DocTracker from "../components/DocTracker";
 import Markdown from "../components/Markdown";
-import TopicList from "../components/TopicList";
-import { getDocBySlug, getDocs, getSiblings, parseDoc, readDoc } from "../lib/content";
+import Pager from "../components/Pager";
+import { toBnDigits } from "../lib/dates";
+import { getDays } from "../lib/plan";
+import { getTopicDoc, getTopicDocs, parseDoc } from "../lib/topics";
 
 type Params = { slug: string };
 
 export function generateStaticParams(): Params[] {
-  return getDocs().map((doc) => ({ slug: doc.slug }));
+  return getTopicDocs().map((doc) => ({ slug: doc.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<Params>;
-}): Promise<Metadata> {
+export const dynamicParams = false;
+
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
-  const doc = getDocBySlug(slug);
-  return { title: doc?.title ?? "পাওয়া যায়নি" };
+  return { title: getTopicDoc(slug)?.title ?? "বিষয়" };
 }
 
-export default async function DocPage({ params }: { params: Promise<Params> }) {
+/**
+ * একটা ডক, `topics/`-এর লেখা হুবহু। প্রতিটা বিষয়ের `id` = anchor — বাকি সাইটের 🧠
+ * chip এখানে নামে। বিষয়ের পাশে plan-এর কোন দিনে ওটা আসে (দিনের শিরোনাম = বিষয়ের নাম)।
+ */
+export default async function TopicDocPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  const doc = getDocBySlug(slug);
-  if (!doc) notFound();
+  const docs = getTopicDocs();
+  const index = docs.findIndex((doc) => doc.slug === slug);
+  if (index === -1) notFound();
 
-  const { title, blocks, topics, headings } = parseDoc(readDoc(doc));
-  const { prev, next } = getSiblings(doc);
+  const doc = docs[index];
+  const { title, sections, topics } = parseDoc(doc.raw);
+  const dayByTitle = new Map(getDays().map((day) => [day.title, day]));
+  const prev = docs[index - 1];
+  const next = docs[index + 1];
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl gap-10 px-5 py-8 md:px-10 md:py-12">
-      <article className="min-w-0 max-w-3xl flex-1">
-        <h1 className="t-title text-xl md:text-2xl">{title}</h1>
+    <>
+      <header className="flex flex-col gap-2">
+        <div className="t-label flex flex-wrap items-center gap-2">
+          <Link href="/topics/" className="t-accent">
+            বিষয়
+          </Link>
+          <span>•</span>
+          <span>{toBnDigits(doc.order)}</span>
+          {topics.length > 0 && (
+            <>
+              <span>•</span>
+              <span>{toBnDigits(topics.length)}টা বিষয়</span>
+            </>
+          )}
+        </div>
+        <h1 className="t-title text-2xl sm:text-3xl">{title}</h1>
+      </header>
 
-        {topics.length > 0 ? (
-          <p className="t-caption mt-2">{topics.length}টি বিষয় — পড়া হলে টিক দিন</p>
-        ) : null}
-
-        {/* খণ্ডগুলো ফাইলের ক্রমেই বসে, তাই `06-creativity`-র মতো heading আর
-            তালিকা পালা করে সাজানো ডকেও ক্রম ঠিক থাকে। */}
-        {blocks.map((block, index) =>
-          block.kind === "topics" ? (
-            <TopicList key={index} route={doc.route} topics={block.topics} />
+      <article className="surface-panel flex flex-col gap-4 p-4 sm:p-6 md:p-8">
+        {sections.map((section, i) =>
+          section.kind === "markdown" ? (
+            <Markdown key={i}>{section.markdown}</Markdown>
           ) : (
-            <Markdown key={index} className="mt-6">
-              {block.markdown}
-            </Markdown>
+            <ul key={i} className="flex flex-col gap-2">
+              {section.topics.map((topic) => {
+                const day = dayByTitle.get(topic.label);
+                return (
+                  <li key={topic.id} id={topic.id} className="surface-raised flex scroll-mt-4 flex-col gap-2 p-3 sm:p-4">
+                    <Markdown inline className="task-text text-sm">
+                      {topic.markdown}
+                    </Markdown>
+                    {day && (
+                      <Link href={`/day/${day.code}/`} className="chip chip--accent self-start">
+                        দিন {day.label}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           ),
         )}
-
-        <DocTracker route={doc.route} />
-
-        <nav className="mt-6 flex items-stretch justify-between gap-3">
-          {prev ? (
-            <Link href={prev.route} className="control flex-1 px-3 py-2 text-xs">
-              <ArrowLeft size={13} />
-              <span className="truncate">{prev.title}</span>
-            </Link>
-          ) : (
-            <span className="flex-1" />
-          )}
-          {next ? (
-            <Link href={next.route} className="control flex-1 justify-end px-3 py-2 text-xs">
-              <span className="truncate">{next.title}</span>
-              <ArrowRight size={13} />
-            </Link>
-          ) : (
-            <span className="flex-1" />
-          )}
-        </nav>
       </article>
 
-      <DocToc headings={headings} />
-    </div>
+      <Pager
+        label="বিষয়"
+        prev={prev && { href: prev.route, label: prev.title }}
+        next={next && { href: next.route, label: next.title }}
+      />
+    </>
   );
 }
